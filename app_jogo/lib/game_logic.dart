@@ -3,7 +3,7 @@ import 'dart:math';
 class GameLogic {
   List<String> words4Letters = [
     "CASA", "RODA", "DADO", "BOLA", "FITA", "MOLA", "RATO", "GATO", "LAGO",
-    "PORT", "PATO", "VIDA", "LAMA", "RAIZ"
+    "BOTE", "PATO", "VIDA", "LAMA", "RAIZ"
     // Adicione mais palavras de 4 letras conforme necessário
   ];
 
