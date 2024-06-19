@@ -31,7 +31,7 @@ class _GamePageState extends State<GamePage>
   void initState() {
     super.initState();
     int numberOfWords =
-        4; // Defina o número de palavras necessárias para o nível
+        5; // Defina o número de palavras necessárias para o nível
     wordsForLevel = gameLogic.getWordsForLevel(widget.level, numberOfWords);
     currentWordIndex = 0;
     currentWord = wordsForLevel[currentWordIndex];
@@ -59,6 +59,7 @@ class _GamePageState extends State<GamePage>
       if (guess == currentWord) {
         wordsGuessedCorrectly++;
         widget.onWordsGuessedCorrectlyUpdated(wordsGuessedCorrectly);
+        lives = maxLives; // Restaurar vidas ao valor máximo
         if (currentWordIndex < wordsForLevel.length - 1) {
           _animationController.forward(from: 0.0).then((_) {
             setState(() {

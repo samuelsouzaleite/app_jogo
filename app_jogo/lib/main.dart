@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'start_page.dart'; // Adicione a importação da nova página
+import 'start_page.dart';
 import 'game_page.dart';
 import 'game_logic.dart';
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const StartPage(), // Altere para StartPage
+      home: const StartPage(),
     );
   }
 }
@@ -34,17 +34,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int wordsGuessedCorrectlyLevel1 = 0;
+  int wordsGuessedCorrectlyLevel2 = 0;
 
-  void updateWordsGuessedCorrectly(int count) {
+  void updateWordsGuessedCorrectlyLevel1(int count) {
     setState(() {
       wordsGuessedCorrectlyLevel1 = count;
+    });
+  }
+
+  void updateWordsGuessedCorrectlyLevel2(int count) {
+    setState(() {
+      wordsGuessedCorrectlyLevel2 = count;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     bool level2Available =
-        GameLogic().isNextLevelAvailable(1, wordsGuessedCorrectlyLevel1, 4);
+        GameLogic().isNextLevelAvailable(1, wordsGuessedCorrectlyLevel1, 5);
+    bool level3Available =
+        GameLogic().isNextLevelAvailable(2, wordsGuessedCorrectlyLevel2, 5);
 
     return Scaffold(
       appBar: AppBar(
@@ -72,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     builder: (context) => GamePage(
                       level: 1,
                       onWordsGuessedCorrectlyUpdated:
-                          updateWordsGuessedCorrectly,
+                          updateWordsGuessedCorrectlyLevel1,
                     ),
                   ),
                 );
@@ -87,7 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(
                           builder: (context) => GamePage(
                             level: 2,
-                            onWordsGuessedCorrectlyUpdated: (int count) {},
+                            onWordsGuessedCorrectlyUpdated:
+                                updateWordsGuessedCorrectlyLevel2,
                           ),
                         ),
                       );
@@ -95,7 +105,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   : null,
               child: const Text('Nível 2'),
             ),
-            // Adicionar mais botões de níveis conforme necessário
+            ElevatedButton(
+              onPressed: level3Available
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GamePage(
+                            level: 3,
+                            onWordsGuessedCorrectlyUpdated: (int count) {},
+                          ),
+                        ),
+                      );
+                    }
+                  : null,
+              child: const Text('Nível 3'),
+            ),
           ],
         ),
       ),
