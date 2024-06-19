@@ -9,7 +9,7 @@ class GameLogic {
 
   List<String> words5Letters = [
     "BARCO", "CARRO", "ROSAS", "ABRIL", "CANOE", "LIVRO", "CASAS", "TORRE",
-    "MACAS", "FLORES"
+    "MACAS", "FLORA"
     // Adicione mais palavras de 5 letras conforme necessário
   ];
 

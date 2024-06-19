@@ -55,29 +55,39 @@ class StartPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 200, // Defina uma largura fixa
-              child: ElevatedButton(
-                onPressed: () {
-                  _showResetConfirmationDialog(context);
-                },
-                child: const Text('Iniciar Novo Jogo'),
-              ),
+            Text(
+              'Bem-vindo, Jogador',
+              style: Theme.of(context).textTheme.headlineLarge,
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16), // Espaço entre os botões
-            SizedBox(
-              width: 200, // Defina a mesma largura fixa
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const MyHomePage(title: 'Níveis')),
-                  );
-                },
-                child: const Text('Continuar'),
-              ),
+            const SizedBox(height: 32),
+            Column(
+              children: [
+                SizedBox(
+                  width: 200, // Defina uma largura fixa
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _showResetConfirmationDialog(context);
+                    },
+                    child: const Text('Novo Jogo'),
+                  ),
+                ),
+                const SizedBox(height: 16), // Espaço entre os botões
+                SizedBox(
+                  width: 200, // Defina a mesma largura fixa
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const MyHomePage(title: 'Níveis')),
+                      );
+                    },
+                    child: const Text('Continuar'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

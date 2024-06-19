@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'start_page.dart';
 import 'game_page.dart';
 import 'game_logic.dart';
-import 'progress_manager.dart'; // Adicione a importação do gerenciador de progresso
+import 'progress_manager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +18,24 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepPurple),
+          bodyLarge: TextStyle(fontSize: 18, color: Colors.deepPurple),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            textStyle: const TextStyle(fontSize: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
       ),
       home: const StartPage(),
     );
@@ -36,6 +54,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int wordsGuessedCorrectlyLevel1 = 0;
   int wordsGuessedCorrectlyLevel2 = 0;
+  int wordsGuessedCorrectlyLevel3 = 0;
 
   @override
   void initState() {
@@ -46,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadProgress() async {
     wordsGuessedCorrectlyLevel1 = await ProgressManager.loadProgress(1);
     wordsGuessedCorrectlyLevel2 = await ProgressManager.loadProgress(2);
+    wordsGuessedCorrectlyLevel3 = await ProgressManager.loadProgress(3);
     setState(() {});
   }
 
@@ -61,6 +81,33 @@ class _MyHomePageState extends State<MyHomePage> {
       wordsGuessedCorrectlyLevel2 = count;
     });
     ProgressManager.saveProgress(2, count);
+  }
+
+  void updateWordsGuessedCorrectlyLevel3(int count) {
+    setState(() {
+      wordsGuessedCorrectlyLevel3 = count;
+    });
+    ProgressManager.saveProgress(3, count);
+  }
+
+  void _showLevelCompletedDialog(int level) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Nível $level Completo'),
+          content: Text('Você já completou este nível. Tente o próximo!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -90,52 +137,67 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GamePage(
-                      level: 1,
-                      onWordsGuessedCorrectlyUpdated:
-                          updateWordsGuessedCorrectlyLevel1,
-                      wordsGuessedCorrectly: wordsGuessedCorrectlyLevel1,
+                if (wordsGuessedCorrectlyLevel1 >= 5) {
+                  _showLevelCompletedDialog(1);
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GamePage(
+                        level: 1,
+                        onWordsGuessedCorrectlyUpdated:
+                            updateWordsGuessedCorrectlyLevel1,
+                        wordsGuessedCorrectly: wordsGuessedCorrectlyLevel1,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
               child: const Text('Nível 1'),
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: level2Available
                   ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GamePage(
-                            level: 2,
-                            onWordsGuessedCorrectlyUpdated:
-                                updateWordsGuessedCorrectlyLevel2,
-                            wordsGuessedCorrectly: wordsGuessedCorrectlyLevel2,
+                      if (wordsGuessedCorrectlyLevel2 >= 5) {
+                        _showLevelCompletedDialog(2);
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GamePage(
+                              level: 2,
+                              onWordsGuessedCorrectlyUpdated:
+                                  updateWordsGuessedCorrectlyLevel2,
+                              wordsGuessedCorrectly:
+                                  wordsGuessedCorrectlyLevel2,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     }
                   : null,
               child: const Text('Nível 2'),
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: level3Available
                   ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GamePage(
-                            level: 3,
-                            onWordsGuessedCorrectlyUpdated: (int count) {},
-                            wordsGuessedCorrectly:
-                                0, // Ajuste conforme necessário
+                      if (wordsGuessedCorrectlyLevel3 >= 5) {
+                        _showLevelCompletedDialog(3);
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GamePage(
+                              level: 3,
+                              onWordsGuessedCorrectlyUpdated: (int count) {},
+                              wordsGuessedCorrectly:
+                                  0, // Ajuste conforme necessário
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     }
                   : null,
               child: const Text('Nível 3'),

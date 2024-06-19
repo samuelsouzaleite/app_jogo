@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'game_logic.dart';
-import 'progress_manager.dart'; // Adicione a importação do gerenciador de progresso
+import 'progress_manager.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -47,7 +47,7 @@ class _GamePageState extends State<GamePage>
     lives = maxLives;
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     );
   }
 
@@ -82,14 +82,17 @@ class _GamePageState extends State<GamePage>
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Parabéns!'),
-                content: Text('Você completou todas as palavras deste nível!'),
+                title: Text('Parabéns!',
+                    style: TextStyle(color: Colors.deepPurple)),
+                content: Text('Você completou todas as palavras deste nível!',
+                    style: TextStyle(color: Colors.deepPurple)),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('OK'),
+                    child:
+                        Text('OK', style: TextStyle(color: Colors.deepPurple)),
                   ),
                 ],
               );
@@ -103,8 +106,10 @@ class _GamePageState extends State<GamePage>
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Game Over'),
-                content: Text('Você perdeu todas as suas vidas!'),
+                title: Text('Game Over',
+                    style: TextStyle(color: Colors.deepPurple)),
+                content: Text('Você perdeu todas as suas vidas!',
+                    style: TextStyle(color: Colors.deepPurple)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -112,7 +117,8 @@ class _GamePageState extends State<GamePage>
                       Navigator.of(context)
                           .pop(); // Voltar para a página inicial
                     },
-                    child: Text('OK'),
+                    child:
+                        Text('OK', style: TextStyle(color: Colors.deepPurple)),
                   ),
                 ],
               );
@@ -138,123 +144,151 @@ class _GamePageState extends State<GamePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nível ${widget.level}'),
+        backgroundColor: Colors.white, // Cor de fundo branca para o AppBar
+        elevation: 0, // Remove a sombra do AppBar
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,
+              color: Colors.deepPurple), // Ícone de volta na cor roxa
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          'Nível ${widget.level}',
+          style: TextStyle(color: Colors.deepPurple), // Cor do título roxa
+        ),
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // Indicador de progresso visual
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomPaint(
-              painter: ProgressPainter(
-                currentWordIndex: currentWordIndex,
-                totalWords: wordsForLevel.length,
-                animation: _animationController,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Indicador de progresso visual
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomPaint(
+                painter: ProgressPainter(
+                  currentWordIndex: currentWordIndex,
+                  totalWords: wordsForLevel.length,
+                  animation: _animationController,
+                  color: Colors.deepPurple, // Defina a cor roxa
+                ),
+                child: const SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                ),
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
+            ),
+            // Mostrar palavras adivinhadas
+            for (var guess in guessedWords)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: guess.split('').asMap().entries.map((entry) {
+                  int idx = entry.key;
+                  String char = entry.value;
+                  return Container(
+                    margin: const EdgeInsets.all(4.0),
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: _getBoxColor(char, idx),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      char,
+                      style: const TextStyle(
+                          fontSize: 24, color: Colors.black), // Texto preto
+                    ),
+                  );
+                }).toList(),
+              ),
+            // Mostrar caixas vazias para a palavra atual
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(_focusNode);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(currentWord.length, (index) {
+                  return Container(
+                    margin: const EdgeInsets.all(4.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      currentGuess.length > index ? currentGuess[index] : '',
+                      style: const TextStyle(
+                          fontSize: 24, color: Colors.black), // Texto preto
+                    ),
+                  );
+                }),
               ),
             ),
-          ),
-          // Mostrar palavras adivinhadas
-          for (var guess in guessedWords)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: guess.split('').asMap().entries.map((entry) {
-                int idx = entry.key;
-                String char = entry.value;
-                return Container(
-                  margin: EdgeInsets.all(4.0),
-                  padding: EdgeInsets.all(8.0),
-                  color: _getBoxColor(char, idx),
-                  child: Text(char),
-                );
-              }).toList(),
-            ),
-          // Mostrar caixas vazias para a palavra atual
-          GestureDetector(
-            onTap: () {
-              FocusScope.of(context).requestFocus(_focusNode);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(currentWord.length, (index) {
-                return Container(
-                  margin: EdgeInsets.all(4.0),
-                  padding: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    currentGuess.length > index ? currentGuess[index] : '',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                );
-              }),
-            ),
-          ),
-          // Campo de entrada de texto oculto
-          TextField(
-            focusNode: _focusNode,
-            controller: _controller,
-            inputFormatters: [
-              UpperCaseTextFormatter(),
-              LengthLimitingTextInputFormatter(maxLength),
-            ],
-            onChanged: (value) {
-              setState(() {
-                currentGuess = value.toUpperCase();
-              });
-            },
-            onSubmitted: (value) {
-              if (value.length == currentWord.length) {
-                handleGuess(value.toUpperCase());
+            // Campo de entrada de texto oculto
+            TextField(
+              focusNode: _focusNode,
+              controller: _controller,
+              inputFormatters: [
+                UpperCaseTextFormatter(),
+                LengthLimitingTextInputFormatter(maxLength),
+              ],
+              onChanged: (value) {
                 setState(() {
-                  currentGuess = '';
-                  _controller.clear();
+                  currentGuess = value.toUpperCase();
                 });
-              }
-            },
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
+              },
+              onSubmitted: (value) {
+                if (value.length == currentWord.length) {
+                  handleGuess(value.toUpperCase());
+                  setState(() {
+                    currentGuess = '';
+                    _controller.clear();
+                  });
+                }
+              },
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+              ),
+              style: const TextStyle(
+                color: Colors.transparent,
+                height: 0,
+              ),
+              cursorColor: Colors.transparent,
+              autofocus: true,
             ),
-            style: TextStyle(
-              color: Colors.transparent,
-              height: 0,
+            // Barra de vida
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+                child: LinearProgressIndicator(
+                  value: lives / maxLives,
+                  backgroundColor: Colors.red[200],
+                  color: Colors.red,
+                  minHeight: 20,
+                ),
+              ),
             ),
-            cursorColor: Colors.transparent,
-            autofocus: true,
-          ),
-          // Barra de vida
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: LinearProgressIndicator(
-              value: lives / maxLives,
-              backgroundColor: Colors.red[200],
-              color: Colors.red,
-              minHeight: 20,
+            // Botão de adivinhação
+            ElevatedButton(
+              onPressed: () {
+                if (currentGuess.length == currentWord.length) {
+                  handleGuess(currentGuess);
+                  setState(() {
+                    currentGuess = '';
+                    _controller.clear();
+                  });
+                }
+              },
+              child: const Text('Adivinhar'),
             ),
-          ),
-          // Botão de adivinhação
-          ElevatedButton(
-            onPressed: () {
-              if (currentGuess.length == currentWord.length) {
-                handleGuess(currentGuess);
-                setState(() {
-                  currentGuess = '';
-                  _controller.clear();
-                });
-              }
-            },
-            child: Text('Adivinhar'),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -275,11 +309,13 @@ class ProgressPainter extends CustomPainter {
   final int currentWordIndex;
   final int totalWords;
   final Animation<double> animation;
+  final Color color;
 
   ProgressPainter(
       {required this.currentWordIndex,
       required this.totalWords,
-      required this.animation})
+      required this.animation,
+      required this.color})
       : super(repaint: animation);
 
   @override
@@ -309,12 +345,12 @@ class ProgressPainter extends CustomPainter {
       );
     }
 
-    Paint filledCirclePaint = Paint()..color = Colors.blue;
+    Paint filledCirclePaint = Paint()..color = color;
     Paint filledLinePaint = Paint()
-      ..color = Colors.blue
+      ..color = color
       ..strokeWidth = 2.0;
 
-    // Desenhar as linhas azuis até a palavra atual
+    // Desenhar as linhas roxas até a palavra atual
     for (int i = 0; i < currentWordIndex; i++) {
       canvas.drawLine(
         Offset(margin + i * spacing, size.height / 2),
@@ -323,7 +359,7 @@ class ProgressPainter extends CustomPainter {
       );
     }
 
-    // Desenhar os círculos azuis até a palavra atual
+    // Desenhar os círculos roxos até a palavra atual
     for (int i = 0; i <= currentWordIndex; i++) {
       canvas.drawCircle(
         Offset(margin + i * spacing, size.height / 2),
