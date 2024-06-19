@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'start_page.dart'; // Adicione a importação da nova página
 import 'game_page.dart';
 import 'game_logic.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Jogo de Termo'),
+      home: const StartPage(), // Altere para StartPage
     );
   }
 }
@@ -49,6 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StartPage()),
+            );
+          },
+        ),
       ),
       body: Center(
         child: Column(
