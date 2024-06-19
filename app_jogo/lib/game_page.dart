@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'game_logic.dart';
+import 'progress_manager.dart'; // Adicione a importação do gerenciador de progresso
 
 class GamePage extends StatefulWidget {
   final int level;
   final Function(int) onWordsGuessedCorrectlyUpdated;
+  final int wordsGuessedCorrectly;
 
-  GamePage({required this.level, required this.onWordsGuessedCorrectlyUpdated});
+  GamePage({
+    required this.level,
+    required this.onWordsGuessedCorrectlyUpdated,
+    required this.wordsGuessedCorrectly,
+  });
 
   @override
   _GamePageState createState() => _GamePageState();
@@ -33,11 +39,11 @@ class _GamePageState extends State<GamePage>
     int numberOfWords =
         5; // Defina o número de palavras necessárias para o nível
     wordsForLevel = gameLogic.getWordsForLevel(widget.level, numberOfWords);
-    currentWordIndex = 0;
+    currentWordIndex = widget.wordsGuessedCorrectly;
     currentWord = wordsForLevel[currentWordIndex];
     currentGuess = '';
     guessedWords = [];
-    wordsGuessedCorrectly = 0;
+    wordsGuessedCorrectly = widget.wordsGuessedCorrectly;
     lives = maxLives;
     _animationController = AnimationController(
       vsync: this,
@@ -60,6 +66,7 @@ class _GamePageState extends State<GamePage>
         wordsGuessedCorrectly++;
         widget.onWordsGuessedCorrectlyUpdated(wordsGuessedCorrectly);
         lives = maxLives; // Restaurar vidas ao valor máximo
+        ProgressManager.saveProgress(widget.level, wordsGuessedCorrectly);
         if (currentWordIndex < wordsForLevel.length - 1) {
           _animationController.forward(from: 0.0).then((_) {
             setState(() {

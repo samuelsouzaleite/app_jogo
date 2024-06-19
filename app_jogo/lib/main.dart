@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'start_page.dart';
 import 'game_page.dart';
 import 'game_logic.dart';
+import 'progress_manager.dart'; // Adicione a importação do gerenciador de progresso
 
 void main() {
   runApp(const MyApp());
@@ -36,16 +37,30 @@ class _MyHomePageState extends State<MyHomePage> {
   int wordsGuessedCorrectlyLevel1 = 0;
   int wordsGuessedCorrectlyLevel2 = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadProgress();
+  }
+
+  Future<void> _loadProgress() async {
+    wordsGuessedCorrectlyLevel1 = await ProgressManager.loadProgress(1);
+    wordsGuessedCorrectlyLevel2 = await ProgressManager.loadProgress(2);
+    setState(() {});
+  }
+
   void updateWordsGuessedCorrectlyLevel1(int count) {
     setState(() {
       wordsGuessedCorrectlyLevel1 = count;
     });
+    ProgressManager.saveProgress(1, count);
   }
 
   void updateWordsGuessedCorrectlyLevel2(int count) {
     setState(() {
       wordsGuessedCorrectlyLevel2 = count;
     });
+    ProgressManager.saveProgress(2, count);
   }
 
   @override
@@ -82,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       level: 1,
                       onWordsGuessedCorrectlyUpdated:
                           updateWordsGuessedCorrectlyLevel1,
+                      wordsGuessedCorrectly: wordsGuessedCorrectlyLevel1,
                     ),
                   ),
                 );
@@ -98,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             level: 2,
                             onWordsGuessedCorrectlyUpdated:
                                 updateWordsGuessedCorrectlyLevel2,
+                            wordsGuessedCorrectly: wordsGuessedCorrectlyLevel2,
                           ),
                         ),
                       );
@@ -114,6 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           builder: (context) => GamePage(
                             level: 3,
                             onWordsGuessedCorrectlyUpdated: (int count) {},
+                            wordsGuessedCorrectly:
+                                0, // Ajuste conforme necessário
                           ),
                         ),
                       );
