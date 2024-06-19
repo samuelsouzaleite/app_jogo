@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
-import 'progress_manager.dart'; // Adicione a importação do gerenciador de progresso
+import 'progress_manager.dart';
+import 'game_logic.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -9,6 +10,7 @@ class StartPage extends StatelessWidget {
     await ProgressManager.saveProgress(1, 0);
     await ProgressManager.saveProgress(2, 0);
     await ProgressManager.saveProgress(3, 0);
+    GameLogic().resetUsedWords();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

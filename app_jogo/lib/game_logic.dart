@@ -3,13 +3,13 @@ import 'dart:math';
 class GameLogic {
   List<String> words4Letters = [
     "CASA", "RODA", "DADO", "BOLA", "FITA", "MOLA", "RATO", "GATO", "LAGO",
-    "PORT", "PATO", "VIDA", "LAMA", "RAIZ"
+    "MAGO", "PATO", "VIDA", "LAMA", "RAIZ"
     // Adicione mais palavras de 4 letras conforme necessário
   ];
 
   List<String> words5Letters = [
     "BARCO", "CARRO", "ROSAS", "ABRIL", "CANOE", "LIVRO", "CASAS", "TORRE",
-    "MACAS", "FLORA"
+    "PORTA", "FLORA"
     // Adicione mais palavras de 5 letras conforme necessário
   ];
 
@@ -19,7 +19,7 @@ class GameLogic {
     // Adicione mais palavras de 6 letras conforme necessário
   ];
 
-  // Adicione mais listas conforme necessário para níveis mais altos
+  List<String> usedWords = [];
 
   List<String> getWordsForLevel(int level, int numberOfWords) {
     List<String> wordList;
@@ -42,8 +42,9 @@ class GameLogic {
 
     while (selectedWords.length < numberOfWords && wordList.isNotEmpty) {
       String word = wordList[random.nextInt(wordList.length)];
-      if (!selectedWords.contains(word)) {
+      if (!selectedWords.contains(word) && !usedWords.contains(word)) {
         selectedWords.add(word);
+        usedWords.add(word);
       }
     }
 
@@ -51,8 +52,11 @@ class GameLogic {
   }
 
   bool isNextLevelAvailable(
-      int level, int wordsGuessedCorrectly, int totalWords) {
-    return wordsGuessedCorrectly >=
-        3; // Exigir que o jogador acerte 3 palavras para avançar
+      int level, int wordsGuessedCorrectly, int requiredWords) {
+    return wordsGuessedCorrectly >= requiredWords;
+  }
+
+  void resetUsedWords() {
+    usedWords.clear();
   }
 }

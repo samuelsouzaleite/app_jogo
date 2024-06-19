@@ -59,6 +59,19 @@ class _GamePageState extends State<GamePage>
     super.dispose();
   }
 
+  void resetLevel() {
+    setState(() {
+      wordsForLevel = gameLogic.getWordsForLevel(widget.level, 5);
+      currentWordIndex = 0;
+      currentWord = wordsForLevel[currentWordIndex];
+      currentGuess = '';
+      guessedWords = [];
+      wordsGuessedCorrectly = 0;
+      lives = maxLives;
+      widget.onWordsGuessedCorrectlyUpdated(0);
+    });
+  }
+
   void handleGuess(String guess) {
     setState(() {
       guessedWords.add(guess);
@@ -114,8 +127,7 @@ class _GamePageState extends State<GamePage>
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .pop(); // Voltar para a página inicial
+                      resetLevel(); // Reiniciar o nível
                     },
                     child:
                         Text('OK', style: TextStyle(color: Colors.deepPurple)),

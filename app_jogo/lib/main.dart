@@ -113,9 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     bool level2Available =
-        GameLogic().isNextLevelAvailable(1, wordsGuessedCorrectlyLevel1, 5);
+        GameLogic().isNextLevelAvailable(1, wordsGuessedCorrectlyLevel1, 3);
     bool level3Available =
-        GameLogic().isNextLevelAvailable(2, wordsGuessedCorrectlyLevel2, 5);
+        GameLogic().isNextLevelAvailable(2, wordsGuessedCorrectlyLevel2, 3);
 
     return Scaffold(
       appBar: AppBar(
@@ -191,9 +191,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           MaterialPageRoute(
                             builder: (context) => GamePage(
                               level: 3,
-                              onWordsGuessedCorrectlyUpdated: (int count) {},
+                              onWordsGuessedCorrectlyUpdated:
+                                  updateWordsGuessedCorrectlyLevel3,
                               wordsGuessedCorrectly:
-                                  0, // Ajuste conforme necessário
+                                  wordsGuessedCorrectlyLevel3,
                             ),
                           ),
                         );
